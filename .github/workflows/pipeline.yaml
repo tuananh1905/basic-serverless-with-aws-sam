@@ -16,16 +16,16 @@ env:
   TESTING_STACK_NAME: sam-app-dev
   TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
   TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
-  TESTING_ARTIFACTS_BUCKET:
+  TESTING_ARTIFACTS_BUCKET: arn:aws:cloudformation:ap-southeast-1:014183400304:stack/dental-clinic-managerment-system-dev/fa053600-605b-11ee-85d8-063062a97464
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${TESTING_IMAGE_REPOSITORY}" to
   # testing "sam package" and "sam deploy" commands.
   # TESTING_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
   TESTING_REGION: ap-southeast-1
   PROD_STACK_NAME: sam-app-prod
-  PROD_PIPELINE_EXECUTION_ROLE: y
-  PROD_CLOUDFORMATION_EXECUTION_ROLE: y
-  PROD_ARTIFACTS_BUCKET:
+  PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
+  PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
+  PROD_ARTIFACTS_BUCKET: arn:aws:cloudformation:ap-southeast-1:014183400304:stack/dental-clinic-managerment-system-dev/fa053600-605b-11ee-85d8-063062a97464
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${PROD_IMAGE_REPOSITORY}" to
   # prod "sam package" and "sam deploy" commands.
