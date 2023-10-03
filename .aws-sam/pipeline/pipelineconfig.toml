@@ -1,0 +1,18 @@
+version = 0.1
+[default.pipeline_bootstrap.parameters]
+pipeline_user = "y"
+permissions_provider = "AWS IAM"
+
+[dev.pipeline_bootstrap.parameters]
+pipeline_execution_role = "y"
+cloudformation_execution_role = "y"
+artifacts_bucket = ""
+image_repository = ""
+region = "ap-southeast-1"
+
+[prod.pipeline_bootstrap.parameters]
+pipeline_execution_role = "y"
+cloudformation_execution_role = "y"
+artifacts_bucket = ""
+image_repository = ""
+region = "ap-southeast-1"
