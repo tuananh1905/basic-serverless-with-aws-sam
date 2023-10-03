@@ -14,8 +14,8 @@ env:
   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.PIPELINE_USER_SECRET_ACCESS_KEY }}
   SAM_TEMPLATE: basic-serverless-with-aws-sam/template.yaml
   TESTING_STACK_NAME: sam-app-dev
-  TESTING_PIPELINE_EXECUTION_ROLE: y
-  TESTING_CLOUDFORMATION_EXECUTION_ROLE: y
+  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
+  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
   TESTING_ARTIFACTS_BUCKET:
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${TESTING_IMAGE_REPOSITORY}" to
