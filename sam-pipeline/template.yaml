@@ -11,6 +11,12 @@ Globals:
     Timeout: 3
     MemorySize: 128
 
+Parameters:
+  DynamoDBTableName:
+    Type: String
+    Description: Name of the DynamoDB table
+    Default: MyDefaultTableName
+
 Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -26,6 +32,13 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+
+  InfrastructureStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./infrastructure/infrastructure.yaml
+      Parameters:
+        TableName: !Ref DynamoDBTableName
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
