@@ -2,6 +2,11 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Infrastructure template
 
+Parameters:
+  TableName:
+    Type: String
+    Description: Name of the DynamoDB table
+
 Resources:
   DynamoDBStack:
     Type: AWS::Serverless::Application
