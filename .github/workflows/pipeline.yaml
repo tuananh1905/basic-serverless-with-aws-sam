@@ -129,7 +129,7 @@ jobs:
           aws-region: ${{ env.TESTING_REGION }}
           role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
           role-session-name: testing-packaging
-          role-duration-seconds: 3600000000000000
+          role-duration-seconds: 3600
           role-skip-session-tagging: true
 
       - name: Upload artifacts to testing artifact buckets
