@@ -14,7 +14,7 @@ env:
   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY  }}
   # AWS_ACCESS_KEY_ID: AKIAQGTLFQNYDJ2AXOHJ
   # AWS_SECRET_ACCESS_KEY: 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
-  SAM_TEMPLATE: template.yaml
+  SAM_TEMPLATE: sam-pipeline/template.yaml
   TESTING_STACK_NAME: sam-pipe-dev
   TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::014183400304:role/aws-sam-cli-managed-dev-pipe-PipelineExecutionRole-1AKAHBSYJ48NB
   TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::014183400304:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-MF7NCGMV4R84
