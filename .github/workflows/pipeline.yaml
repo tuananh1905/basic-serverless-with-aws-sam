@@ -10,22 +10,24 @@ on:
       - "feature**"
 
 env:
-  PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.PIPELINE_USER_ACCESS_KEY_ID }}
-  PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.PIPELINE_USER_SECRET_ACCESS_KEY }}
-  SAM_TEMPLATE: basic-serverless-with-aws-sam/template.yaml
-  TESTING_STACK_NAME: sam-app-dev
-  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
-  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
-  TESTING_ARTIFACTS_BUCKET: arn:aws:cloudformation:ap-southeast-1:014183400304:stack/dental-clinic-managerment-system-dev/fa053600-605b-11ee-85d8-063062a97464
+  PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID  }}
+  PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY  }}
+  # AWS_ACCESS_KEY_ID: AKIAQGTLFQNYDJ2AXOHJ
+  # AWS_SECRET_ACCESS_KEY: 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
+  SAM_TEMPLATE: template.yaml
+  TESTING_STACK_NAME: sam-pipe-dev
+  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::014183400304:role/aws-sam-cli-managed-dev-pipe-PipelineExecutionRole-1AKAHBSYJ48NB
+  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::014183400304:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-MF7NCGMV4R84
+  TESTING_ARTIFACTS_BUCKET: aws-sam-cli-managed-dev-pipeline-artifactsbucket-15zzrtj4uvppu
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${TESTING_IMAGE_REPOSITORY}" to
   # testing "sam package" and "sam deploy" commands.
   # TESTING_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
   TESTING_REGION: ap-southeast-1
-  PROD_STACK_NAME: sam-app-prod
-  PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
-  PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::014183400304:role/lambda-user
-  PROD_ARTIFACTS_BUCKET: arn:aws:cloudformation:ap-southeast-1:014183400304:stack/dental-clinic-managerment-system-dev/fa053600-605b-11ee-85d8-063062a97464
+  PROD_STACK_NAME: sam-pipe-prod
+  PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::014183400304:role/aws-sam-cli-managed-prod-pip-PipelineExecutionRole-1C9WXLP1ZHOTZ
+  PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::014183400304:role/aws-sam-cli-managed-prod-CloudFormationExecutionR-1M6SWR0G0HB69
+  PROD_ARTIFACTS_BUCKET: aws-sam-cli-managed-prod-pipeline-artifactsbucket-1vz63wibsar8h
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${PROD_IMAGE_REPOSITORY}" to
   # prod "sam package" and "sam deploy" commands.

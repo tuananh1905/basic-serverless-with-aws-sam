@@ -4,7 +4,7 @@ version = 0.1
 
 [default]
 [default.global.parameters]
-stack_name = "basic-serverless-with-aws-sam"
+stack_name = "sam-pipeline"
 
 [default.build.parameters]
 cached = true
