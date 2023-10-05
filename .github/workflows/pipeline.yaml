@@ -201,7 +201,7 @@ jobs:
             --parameter-overrides StageName=${TESTING_STACK_NAME}
 
   integration-test:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'prod')
     needs: [deploy-testing]
     runs-on: ubuntu-latest
     steps:
@@ -210,7 +210,7 @@ jobs:
           # trigger the integration tests here
 
   deploy-prod:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'prod')
     needs: [integration-test]
     runs-on: ubuntu-latest
     # Configure GitHub Action Environment to have a manual approval step before deployment to production

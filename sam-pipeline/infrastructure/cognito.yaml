@@ -1,0 +1,172 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: COGNITO - USER POOL / USER POOL CLIENT
+
+Parameters:
+  StageName:
+    Type: String
+  AppName:
+    Type: String
+
+Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub "${StageName}-${AppName}-userpool"
+      Schema:
+        - Name: account_name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: account_password
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: name
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+        - Name: DOB
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+        - Name: address
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+        - Name: phone_number
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+        - Name: description
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+        - Name: status
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+      AliasAttributes:
+        - account_name
+      UsernameAttributes:
+        - email
+        - account_name
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: True
+          RequireLowercase: True
+          RequireNumbers: True
+          RequireSymbols: True
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub "${StageName}-${AppName}-userpool-client"
+      GenerateSecret: false
+      UserPoolId:
+        Ref: UserPool
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+
+  IdentityPool:
+    Type: "AWS::Cognito::IdentityPool"
+    Properties:
+      IdentityPoolName: !Sub "${StageName}-${AppName}-identity-pool"
+      AllowUnauthenticatedIdentities: false # chỉ cho phép xác thực từ những người dùng đã đăng nhập
+      # CognitoIdentityProviders:
+      #   - ClientId: !Ref UserPoolClient
+      #     ProviderName: !GetAtt [UserPool, "ProviderName"]
+
+  AdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: !Sub "${StageName}-${AppName}-admin"
+      Description: "Admin group for special privileges"
+      UserPoolId:
+        Ref: UserPool
+      RoleArn: !GetAtt AdminRole.Arn
+
+  DoctorGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: !Sub "${StageName}-${AppName}-doctor"
+      Description: "Doctor group"
+      UserPoolId:
+        Ref: UserPool
+
+  NurseGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: !Sub "${StageName}-${AppName}-nurse"
+      Description: "Nurse group"
+      UserPoolId:
+        Ref: UserPool
+
+  AdminRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: "cognito-identity.amazonaws.com"
+            Action:
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
+      Policies:
+        - PolicyName: "AdminFullAccess"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action: "*"
+                Resource: "*"
+
+Outputs:
+  UserPoolId:
+    Description: "ID of the created user pool"
+    Value: !Ref UserPool
+
+  UserPoolArn:
+    Description: "ARN of the created user pool"
+    Value: !Ref UserPool.Arn
+
+  UserPoolClientId:
+    Description: "ID of the created user pool client"
+    Value: !Ref UserPoolClient
+
+  IdentityPoolId:
+    Description: "ID of the created identity pool"
+    Value: !Ref IdentityPool
+
+  AdminGroupId:
+    Description: "ID of the Admin user pool group"
+    Value: !Ref AdminGroup
+
+  DoctorGroupId:
+    Description: "ID of the Doctor user pool group"
+    Value: !Ref DoctorGroup
+
+  NurseGroupId:
+    Description: "ID of the Nurse user pool group"
+    Value: !Ref NurseGroup
+
+  AdminRoleArn:
+    Description: "ARN of the Admin IAM role"
+    Value: !GetAtt AdminRole.Arn
+
+  AdminGroupArn:
+    Description: "ARN of the Admin user pool group"
+    Value: !GetAtt AdminGroup.Arn

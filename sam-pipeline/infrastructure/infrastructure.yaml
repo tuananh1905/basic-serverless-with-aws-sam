@@ -3,6 +3,10 @@ Transform: AWS::Serverless-2016-10-31
 Description: Infrastructure template
 
 Parameters:
+  StageName:
+    Type: String
+  AppName:
+    Type: String
   TableName:
     Type: String
     Description: Name of the DynamoDB table
@@ -14,3 +18,18 @@ Resources:
       Location: ./dynamodb.yaml
       Parameters:
         TableName: !Ref TableName
+
+  CognitoStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./cognito.yaml
+      Parameters:
+        StageName: !Ref StageName
+        AppName: !Ref AppName
+
+Outputs:
+  CognitoAdminGroupArn:
+    Description: "ARN of the Admin user pool group from Cognito stack"
+    Value: !GetAtt CognitoStack.Outputs.AdminGroupArn
+  CognitoUserPoolArn:
+    Value: !GetAtt CognitoStack.Outputs.UserPoolArn
