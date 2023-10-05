@@ -141,7 +141,7 @@ Outputs:
 
   UserPoolArn:
     Description: "ARN of the created user pool"
-    Value: !Ref UserPool.Arn
+    Value: !GetAtt UserPool.Arn
 
   UserPoolClientId:
     Description: "ID of the created user pool client"
