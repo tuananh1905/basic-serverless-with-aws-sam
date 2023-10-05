@@ -32,9 +32,7 @@ Resources:
           Properties:
             # Path: !Join ["/", [!Ref "AWS::StackName", "hello"]]
             # Path: /stag/hello/
-            Path: !Sub
-              - /${StackName}/hello/
-              - StackName: !Ref "AWS::StackName"
+            Path: !Join ["", ["/", !Ref "AWS::StackName", "/", "hello", "/"]]
             Method: get
 
   InfrastructureStack:
