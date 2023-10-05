@@ -49,39 +49,38 @@ Resources:
             Path: hello/
             Method: get
 
-  AdminTest:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: hello_world
-      Handler: app.lambda_handler
-      Runtime: python3.8
-      Architectures:
-        - x86_64
-      Events:
-        GetAdminEndpoint:
-          Type: Api
-          Properties:
-            Path: /admin-only
-            Method: GET
-            # RestApiId: !Ref MyApi
-            StageName: !Sub ${StageName}
-            Auth:
-              DefaultAuthorizer: MyCognitoAuthorizer
-              Authorizers:
-                MyCognitoAuthorizer:
-                  UserPoolArn: !GetAtt InfrastructureStack.Outputs.CognitoUserPoolArn
-                  Identity:
-                    Header: Authorization
-                    ValidationExpression: '^Bearer [-0-9a-zA-Z\._]*$'
-                    ReauthorizeEvery: 300
-              ResourcePolicy:
-                CustomStatements:
-                  - Effect: "Deny"
-                    Action: "execute-api:Invoke"
-                    Resource: "execute-api:/*/*/*/admin-only"
-                    Condition:
-                      StringNotEquals:
-                        cognito:preferred_role: !GetAtt InfrastructureStack.Outputs.CognitoAdminGroupArn
+  # AdminTest:
+  #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  #   Properties:
+  #     CodeUri: hello_world
+  #     Handler: app.lambda_handler
+  #     Runtime: python3.8
+  #     Architectures:
+  #       - x86_64
+  #     Events:
+  #       GetAdminEndpoint:
+  #         Type: Api
+  #         Properties:
+  #           Path: /admin-only
+  #           Method: GET
+  #           # RestApiId: !Ref MyApi
+  #           Auth:
+  #             DefaultAuthorizer: MyCognitoAuthorizer
+  #             Authorizers:
+  #               MyCognitoAuthorizer:
+  #                 UserPoolArn: !GetAtt InfrastructureStack.Outputs.CognitoUserPoolArn
+  #                 Identity:
+  #                   Header: Authorization
+  #                   ValidationExpression: '^Bearer [-0-9a-zA-Z\._]*$'
+  #                   ReauthorizeEvery: 300
+  #             ResourcePolicy:
+  #               CustomStatements:
+  #                 - Effect: "Deny"
+  #                   Action: "execute-api:Invoke"
+  #                   Resource: "execute-api:/*/*/*/admin-only"
+  #                   Condition:
+  #                     StringNotEquals:
+  #                       cognito:preferred_role: !GetAtt InfrastructureStack.Outputs.CognitoAdminGroupArn
 
   InfrastructureStack:
     Type: AWS::Serverless::Application
