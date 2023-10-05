@@ -174,4 +174,4 @@ Outputs:
       - Region: !Ref "AWS::Region"
         AccountId: !Ref "AWS::AccountId"
         UserPoolId: !Ref UserPool
-        GroupName: !GetAtt AdminGroup.GroupName
+        GroupName: !Sub "${StageName}-${AppName}-admin"
