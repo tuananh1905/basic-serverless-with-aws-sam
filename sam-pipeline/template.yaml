@@ -15,7 +15,7 @@ Parameters:
   DynamoDBTableName:
     Type: String
     Description: Name of the DynamoDB table
-    Default: ${AWS::StackName}-nguyen-tran-clinic
+    Default: !Sub ${AWS::StackName}-nguyen-tran-clinic
 
 Resources:
   HelloWorldFunction:
@@ -30,7 +30,7 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /${AWS::StackName}/hello
+            Path: !Sub /${AWS::StackName}/hello
             Method: get
 
   InfrastructureStack:
