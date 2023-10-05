@@ -14,14 +14,6 @@ Resources:
     Properties:
       UserPoolName: !Sub "${StageName}-${AppName}-userpool"
       Schema:
-        - Name: account_name
-          AttributeDataType: String
-          Mutable: true
-          Required: true
-        - Name: account_password
-          AttributeDataType: String
-          Mutable: true
-          Required: true
         - Name: name
           AttributeDataType: String
           Mutable: true
@@ -51,10 +43,7 @@ Resources:
           Mutable: true
           Required: false
       AliasAttributes:
-        - account_name
-      UsernameAttributes:
         - email
-        - account_name
       Policies:
         PasswordPolicy:
           MinimumLength: 8
