@@ -8,14 +8,14 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
-    MemorySize: 128
+    Timeout: 5
+    MemorySize: 256
 
 Parameters:
   DynamoDBTableName:
     Type: String
     Description: Name of the DynamoDB table
-    Default: MyDefaultTableName
+    Default: ${AWS::StackName}-nguyen-tran-clinic
 
 Resources:
   HelloWorldFunction:
@@ -30,7 +30,7 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /${AWS::StackName}/hello
             Method: get
 
   InfrastructureStack:
