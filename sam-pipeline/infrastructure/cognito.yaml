@@ -169,4 +169,9 @@ Outputs:
 
   AdminGroupArn:
     Description: "ARN of the Admin user pool group"
-    Value: !GetAtt AdminGroup.Arn
+    Value: !Sub
+      - arn:aws:cognito-idp:${Region}:${AccountId}:userpool/${UserPoolId}/group/${GroupName}
+      - Region: !Ref "AWS::Region"
+        AccountId: !Ref "AWS::AccountId"
+        UserPoolId: !Ref UserPool
+        GroupName: !GetAtt AdminGroup.GroupName
