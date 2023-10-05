@@ -15,7 +15,7 @@ Parameters:
   DynamoDBTableName:
     Type: String
     Description: Name of the DynamoDB table
-    Default: !Sub ${AWS::StackName}-nguyen-tran-clinic
+    Default: !Sub "${AWS::StackName}-nguyen-tran-clinic"
 
 Resources:
   AppApi:
