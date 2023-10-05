@@ -15,6 +15,7 @@ Parameters:
   StageName:
     Type: String
     Description: Stage name
+    Default: prod
 
 Resources:
   # AppApi:
