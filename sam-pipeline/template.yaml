@@ -75,7 +75,7 @@ Resources:
             # Path: !Sub
             #   - /${StackName}/hello
             #   - StackName: !Ref "AWS::StackName"
-            RestApiId: !Ref AppApi
+            ApiId: !Ref AppApi
             Path: hello/
             Method: get
   AppFunction:
