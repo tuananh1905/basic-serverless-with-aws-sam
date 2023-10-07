@@ -64,7 +64,7 @@ Resources:
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthFlows:
         - code
-        - !If [UsePostman, implicit, !Ref AWS::NoValue]
+        - !If [implicit, !Ref AWS::NoValue]
       ExplicitAuthFlows:
         - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
