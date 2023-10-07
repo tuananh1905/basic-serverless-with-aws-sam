@@ -26,6 +26,23 @@ Resources:
       Auth:
         DefaultAuthorizer: AWS_IAM
 
+  myAPI:
+    Type: AWS::Serverless::Api
+    Description: Main API
+    Properties:
+      StageName: dev
+      Cors:
+        AllowMethods: "'GET, OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+        MaxAge: "'500'"
+      Auth:
+        AddDefaultAuthorizerToCorsPreflight: false
+        DefaultAuthorizer: MyCognitoAuthorizer
+        Authorizers:
+          MyCognitoAuthorizer:
+            UserPoolArn: arn:aws:cognito-idp:ap-southeast-1:014183400304:userpool/ap-southeast-1_lRaRDCnnI
+
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -48,7 +65,20 @@ Resources:
             RestApiId: !Ref AppApi
             Path: hello/
             Method: get
-
+  myFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdaExample/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Events:
+        EmyFunction:
+          Type: Api
+          Properties:
+            Path: /lambdaExample
+            Method: get
+            RestApiId:
+              Ref: myAPI
   # AdminTest:
   #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
   #   Properties:
