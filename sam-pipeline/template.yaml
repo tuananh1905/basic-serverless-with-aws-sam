@@ -30,7 +30,7 @@ Resources:
     Type: AWS::Serverless::Api
     Description: Main API
     Properties:
-      StageName: dev
+      StageName: !Sub ${StageName}
       Cors:
         AllowMethods: "'GET, OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
@@ -71,14 +71,15 @@ Resources:
       CodeUri: lambdaExample/
       Handler: app.lambda_handler
       Runtime: python3.8
+      Architectures:
+        - x86_64
       Events:
-        EmyFunction:
+        myFunction:
           Type: Api
           Properties:
             Path: /lambdaExample
             Method: get
-            RestApiId:
-              Ref: myAPI
+            RestApiId: !Ref: myAPI
   # AdminTest:
   #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
   #   Properties:
