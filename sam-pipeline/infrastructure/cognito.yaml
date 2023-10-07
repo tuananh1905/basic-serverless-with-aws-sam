@@ -59,7 +59,11 @@ Resources:
       GenerateSecret: false
       UserPoolId:
         Ref: UserPool
+      SupportedIdentityProviders:
+        - COGNITO
       AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - code
       ExplicitAuthFlows:
         - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
