@@ -18,45 +18,37 @@ Parameters:
     Default: prod
 
 Resources:
-  # myAPI:
-  #   Type: AWS::Serverless::Api
-  #   Description: Main API
-  #   Properties:
-  #     StageName: !Sub ${StageName}
-  #     Cors:
-  #       AllowMethods: "'GET, OPTIONS'"
-  #       AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-  #       AllowOrigin: "'*'"
-  #       MaxAge: "'500'"
-  #     Auth:
-  #       AddDefaultAuthorizerToCorsPreflight: false
-  #       DefaultAuthorizer: MyCognitoAuthorizer
-  #       Authorizers:
-  #         MyCognitoAuthorizer:
-  #           UserPoolArn: arn:aws:cognito-idp:ap-southeast-1:014183400304:userpool/ap-southeast-1_lRaRDCnnI
+  AppApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Description: IAM authorizer REST API demo
+      StageName: !Sub ${StageName}
+      Auth:
+        DefaultAuthorizer: AWS_IAM
 
-  # HelloWorldFunction:
-  #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-  #   Properties:
-  #     CodeUri: hello_world
-  #     Handler: app.lambda_handler
-  #     Runtime: python3.8
-  #     Architectures:
-  #       - x86_64
-  #     Events:
-  #       HelloWorld:
-  #         Type: HttpApi # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-  #         Properties:
-  #           # Path: !Join ["/", [!Ref "AWS::StackName", "hello"]]
-  #           # Path: /stag/hello/
-  #           # Path: !Join ["", ["/", !Ref "AWS::StackName", "/", "hello", "/"]]
-  #           # Path: !Sub "/${StageName}/hello"
-  #           # Path: !Sub
-  #           #   - /${StackName}/hello
-  #           #   - StackName: !Ref "AWS::StackName"
-  #           ApiId: !Ref AppApi
-  #           Path: hello/
-  #           Method: get
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hello_world
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            # Path: !Join ["/", [!Ref "AWS::StackName", "hello"]]
+            # Path: /stag/hello/
+            # Path: !Join ["", ["/", !Ref "AWS::StackName", "/", "hello", "/"]]
+            # Path: !Sub "/${StageName}/hello"
+            # Path: !Sub
+            #   - /${StackName}/hello
+            #   - StackName: !Ref "AWS::StackName"
+            RestApiId: !Ref AppApi
+            Path: hello/
+            Method: get
+
   # AdminTest:
   #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
   #   Properties:
@@ -90,62 +82,6 @@ Resources:
   #                     StringNotEquals:
   #                       cognito:preferred_role: !GetAtt InfrastructureStack.Outputs.CognitoAdminGroupArn
 
-  AppApi:
-    Type: AWS::ApiGateway::RestApi
-    Properties:
-      Name: cognito-restapi
-      Description: Cognito User Pools Authorizer REST API demo
-
-  # GET Method with Cognito User Pools Authorizer enabled
-  RootMethodGet:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      RestApiId: !Ref AppApi
-      ResourceId: !GetAtt AppApi.RootResourceId
-      HttpMethod: GET
-      AuthorizationType: COGNITO_USER_POOLS
-      AuthorizerId: !Ref AuthorizersCognitoUserPools
-      Integration:
-        Type: AWS_PROXY
-        IntegrationHttpMethod: POST
-        Uri:
-          !Join [
-            "",
-            [
-              "arn:aws:apigateway:",
-              !Ref AWS::Region,
-              ":lambda:path/2015-03-31/functions/",
-              !GetAtt AppFunction.Arn,
-              "/invocations",
-            ],
-          ]
-
-  # Cognito User Pools Authorizer
-  AuthorizersCognitoUserPools:
-    Type: AWS::ApiGateway::Authorizer
-    Properties:
-      Name: CognitoAuthorizer
-      Type: COGNITO_USER_POOLS
-      RestApiId: !Ref AppApi
-      IdentitySource: method.request.header.authorizationToken
-      ProviderARNs:
-        - !GetAtt InfrastructureStack.Outputs.CognitoUserPoolArn
-
-  # Dummy function
-  AppFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: app.lambda_handler
-
-  # Permission to allow Lambda invocation from API Gateway
-  AppFunctionPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref AppFunction
-      Action: lambda:InvokeFunction
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${AppApi}/*/GET/
-
   InfrastructureStack:
     Type: AWS::Serverless::Application
     Properties:
@@ -154,19 +90,7 @@ Resources:
         TableName: !Sub "${StageName}-nguyen-tran-clinic"
         StageName: !Sub ${StageName}
         AppName: "dmcs"
-  Deployment:
-    Type: AWS::ApiGateway::Deployment
-    DependsOn:
-      - RootMethodGet
-    Properties:
-      RestApiId: !Ref AppApi
 
-  Stage:
-    Type: AWS::ApiGateway::Stage
-    Properties:
-      StageName: !Sub ${StageName}
-      RestApiId: !Ref AppApi
-      DeploymentId: !Ref Deployment
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM

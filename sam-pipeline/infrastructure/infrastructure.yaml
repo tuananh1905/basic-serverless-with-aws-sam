@@ -33,7 +33,3 @@ Outputs:
     Value: !GetAtt CognitoStack.Outputs.AdminGroupArn
   CognitoUserPoolArn:
     Value: !GetAtt CognitoStack.Outputs.UserPoolArn
-  CognitoIssuer:
-    Value: !GetAtt CognitoStack.Outputs.Issuer
-  CognitoUserPoolClientId:
-    Value: !GetAtt CognitoStack.Outputs.UserPoolClientId

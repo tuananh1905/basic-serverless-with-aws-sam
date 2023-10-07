@@ -122,6 +122,7 @@ Resources:
               - Effect: "Allow"
                 Action: "*"
                 Resource: "*"
+
 Outputs:
   UserPoolId:
     Description: "ID of the created user pool"
@@ -163,6 +164,3 @@ Outputs:
         AccountId: !Ref "AWS::AccountId"
         UserPoolId: !Ref UserPool
         GroupName: !Sub "${StageName}-${AppName}-admin"
-  Issuer:
-    Description: "Url used for issuer on HTTP API JWT tokens"
-    Value: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}
