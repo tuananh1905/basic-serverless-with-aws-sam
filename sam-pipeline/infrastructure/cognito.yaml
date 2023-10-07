@@ -59,6 +59,7 @@ Resources:
       GenerateSecret: false
       UserPoolId:
         Ref: UserPool
+      AllowedOAuthFlowsUserPoolClient: true
       ExplicitAuthFlows:
         - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
@@ -164,3 +165,6 @@ Outputs:
         AccountId: !Ref "AWS::AccountId"
         UserPoolId: !Ref UserPool
         GroupName: !Sub "${StageName}-${AppName}-admin"
+  Issuer:
+    Description: "Url used for issuer on HTTP API JWT tokens"
+    Value: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}

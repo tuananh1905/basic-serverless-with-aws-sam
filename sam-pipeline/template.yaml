@@ -19,29 +19,42 @@ Parameters:
 
 Resources:
   AppApi:
-    Type: AWS::Serverless::Api
+    Type: AWS::Serverless::HttpApi
     Properties:
-      Description: IAM authorizer REST API demo
-      StageName: !Sub ${StageName}
+      Description: Cognito to HTTP API demo
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+        AllowOrigins:
+          - !Ref Client
       Auth:
-        DefaultAuthorizer: AWS_IAM
-
-  myAPI:
-    Type: AWS::Serverless::Api
-    Description: Main API
-    Properties:
-      StageName: !Sub ${StageName}
-      Cors:
-        AllowMethods: "'GET, OPTIONS'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"
-        MaxAge: "'500'"
-      Auth:
-        AddDefaultAuthorizerToCorsPreflight: false
-        DefaultAuthorizer: MyCognitoAuthorizer
         Authorizers:
-          MyCognitoAuthorizer:
-            UserPoolArn: arn:aws:cognito-idp:ap-southeast-1:014183400304:userpool/ap-southeast-1_lRaRDCnnI
+          OAuth2Authorizer:
+            AuthorizationScopes:
+              - email
+            IdentitySource: "$request.header.Authorization"
+            JwtConfiguration:
+              issuer: !GetAtt InfrastructureStack.Outputs.CognitoIssuer
+              audience:
+                - !GetAtt InfrastructureStack.Outputs.CognitoUserPoolClientId
+        DefaultAuthorizer: OAuth2Authorizer
+
+  # myAPI:
+  #   Type: AWS::Serverless::Api
+  #   Description: Main API
+  #   Properties:
+  #     StageName: !Sub ${StageName}
+  #     Cors:
+  #       AllowMethods: "'GET, OPTIONS'"
+  #       AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+  #       AllowOrigin: "'*'"
+  #       MaxAge: "'500'"
+  #     Auth:
+  #       AddDefaultAuthorizerToCorsPreflight: false
+  #       DefaultAuthorizer: MyCognitoAuthorizer
+  #       Authorizers:
+  #         MyCognitoAuthorizer:
+  #           UserPoolArn: arn:aws:cognito-idp:ap-southeast-1:014183400304:userpool/ap-southeast-1_lRaRDCnnI
 
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -65,21 +78,19 @@ Resources:
             RestApiId: !Ref AppApi
             Path: hello/
             Method: get
-  myFunction:
+  AppFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambdaExample/
+      CodeUri: hello_world
       Handler: app.lambda_handler
       Runtime: python3.8
-      Architectures:
-        - x86_64
       Events:
-        myFunction:
-          Type: Api
+        AppApi:
+          Type: HttpApi
           Properties:
-            Path: /lambdaExample
+            ApiId: !Ref AppApi
+            Path: /app-function
             Method: get
-            RestApiId: !Ref myAPI
   # AdminTest:
   #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
   #   Properties:
