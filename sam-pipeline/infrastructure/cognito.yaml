@@ -59,8 +59,6 @@ Resources:
       GenerateSecret: false
       UserPoolId:
         Ref: UserPool
-      SupportedIdentityProviders:
-        - COGNITO
       ExplicitAuthFlows:
         - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
@@ -124,7 +122,6 @@ Resources:
               - Effect: "Allow"
                 Action: "*"
                 Resource: "*"
-
 Outputs:
   UserPoolId:
     Description: "ID of the created user pool"
