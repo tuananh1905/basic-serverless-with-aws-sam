@@ -135,7 +135,7 @@ Resources:
   AppFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: app.handler
+      Handler: app.lambda_handler
 
   # Permission to allow Lambda invocation from API Gateway
   AppFunctionPermission:
