@@ -18,12 +18,6 @@ Parameters:
     Default: prod
 
 Resources:
-  AppApi:
-    Type: AWS::ApiGateway::RestApi
-    Properties:
-      Name: cognito-restapi
-      Description: Cognito User Pools Authorizer REST API demo
-
   # myAPI:
   #   Type: AWS::Serverless::Api
   #   Description: Main API
@@ -63,50 +57,6 @@ Resources:
   #           ApiId: !Ref AppApi
   #           Path: hello/
   #           Method: get
-  RootMethodGet:
-    Type: AWS::ApiGateway::Method
-    Properties:
-      RestApiId: !Ref AppApi
-      ResourceId: !GetAtt AppApi.RootResourceId
-      HttpMethod: GET
-      AuthorizationType: COGNITO_USER_POOLS
-      AuthorizerId: !Ref AuthorizersCognitoUserPools
-      Integration:
-        Type: AWS_PROXY
-        IntegrationHttpMethod: POST
-        Uri:
-          !Join [
-            "",
-            [
-              "arn:aws:apigateway:",
-              !Ref AWS::Region,
-              ":lambda:path/2015-03-31/functions/",
-              !GetAtt AppFunction.Arn,
-              "/invocations",
-            ],
-          ]
-
-  # Cognito User Pools Authorizer
-  AuthorizersCognitoUserPools:
-    Type: AWS::ApiGateway::Authorizer
-    Properties:
-      Name: CognitoAuthorizer
-      Type: COGNITO_USER_POOLS
-      RestApiId: !Ref AppApi
-      IdentitySource: method.request.header.authorizationToken
-      ProviderARNs:
-        - !GetAtt InfrastructureStack.Outputs.CognitoUserPoolArn
-  AppFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: app.handler
-  AppFunctionPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref AppFunction
-      Action: lambda:InvokeFunction
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${AppApi}/*/GET/
   # AdminTest:
   #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
   #   Properties:
@@ -140,6 +90,62 @@ Resources:
   #                     StringNotEquals:
   #                       cognito:preferred_role: !GetAtt InfrastructureStack.Outputs.CognitoAdminGroupArn
 
+  AppApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: cognito-restapi
+      Description: Cognito User Pools Authorizer REST API demo
+
+  # GET Method with Cognito User Pools Authorizer enabled
+  RootMethodGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref AppApi
+      ResourceId: !GetAtt AppApi.RootResourceId
+      HttpMethod: GET
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref AuthorizersCognitoUserPools
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri:
+          !Join [
+            "",
+            [
+              "arn:aws:apigateway:",
+              !Ref AWS::Region,
+              ":lambda:path/2015-03-31/functions/",
+              !GetAtt AppFunction.Arn,
+              "/invocations",
+            ],
+          ]
+
+  # Cognito User Pools Authorizer
+  AuthorizersCognitoUserPools:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: CognitoAuthorizer
+      Type: COGNITO_USER_POOLS
+      RestApiId: !Ref AppApi
+      IdentitySource: method.request.header.authorizationToken
+      ProviderARNs:
+        - !GetAtt InfrastructureStack.Outputs.CognitoUserPoolArn
+
+  # Dummy function
+  AppFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+
+  # Permission to allow Lambda invocation from API Gateway
+  AppFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref AppFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${AppApi}/*/GET/
+
   InfrastructureStack:
     Type: AWS::Serverless::Application
     Properties:
@@ -148,7 +154,19 @@ Resources:
         TableName: !Sub "${StageName}-nguyen-tran-clinic"
         StageName: !Sub ${StageName}
         AppName: "dmcs"
+  Deployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - RootMethodGet
+    Properties:
+      RestApiId: !Ref AppApi
 
+  Stage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      StageName: !Sub ${StageName}
+      RestApiId: !Ref AppApi
+      DeploymentId: !Ref Deployment
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
