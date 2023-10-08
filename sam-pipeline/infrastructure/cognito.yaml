@@ -13,7 +13,7 @@ Resources:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: !Sub "${StageName}-${AppName}-userpool"
-      MfaConfiguration: OFF
+      MfaConfiguration: "OFF"
       Schema:
         - Name: name
           AttributeDataType: String
