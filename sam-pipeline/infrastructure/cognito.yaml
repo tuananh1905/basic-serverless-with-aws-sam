@@ -79,7 +79,16 @@ Resources:
       AllowUnauthenticatedIdentities: false # chỉ cho phép xác thực từ những người dùng đã đăng nhập
       CognitoIdentityProviders:
         - ClientId: !Ref UserPoolClient
-          ProviderName: !Sub "cognito-idp.${AWS::Region}.amazonaws.com/${UserPool.Id}"
+          ProviderName:
+            !Join [
+              "",
+              [
+                "cognito-idp.",
+                !Ref "AWS::Region",
+                ".amazonaws.com/",
+                !Ref UserPool,
+              ],
+            ]
 
   AdminGroup:
     Type: AWS::Cognito::UserPoolGroup
