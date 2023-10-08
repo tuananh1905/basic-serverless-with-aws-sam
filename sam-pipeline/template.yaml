@@ -139,6 +139,7 @@ Resources:
         TableName: !Sub "${StageName}-nguyen-tran-clinic"
         StageName: !Sub ${StageName}
         AppName: "dmcs"
+        AppApiId: !Ref AppApi
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -159,3 +160,5 @@ Outputs:
   AppApiId:
     Description: "API ID"
     Value: !Ref AppApi
+    Export:
+      Name: AppApiId
