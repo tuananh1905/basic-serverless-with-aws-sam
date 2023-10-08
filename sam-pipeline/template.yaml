@@ -55,6 +55,8 @@ Resources:
             RestApiId: !Ref AppApi
             Path: hello/
             Method: get
+            Auth:
+              Authorizer: MyCognitoAuthorizer
   # MyApi:
   #   Type: AWS::Serverless::Api
   #   Properties:
