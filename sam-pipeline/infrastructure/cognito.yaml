@@ -13,6 +13,7 @@ Resources:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: !Sub "${StageName}-${AppName}-userpool"
+      MfaConfiguration: OFF
       Schema:
         - Name: name
           AttributeDataType: String
@@ -59,6 +60,8 @@ Resources:
       GenerateSecret: false
       UserPoolId:
         Ref: UserPool
+      SupportedIdentityProviders:
+        - COGNITO
       ExplicitAuthFlows:
         - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
