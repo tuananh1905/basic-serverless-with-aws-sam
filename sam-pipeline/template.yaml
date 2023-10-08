@@ -27,7 +27,7 @@ Resources:
         DefaultAuthorizer: MyCognitoAuthorizer
         Authorizers:
           MyCognitoAuthorizer:
-            UserPoolArn: !GetAtt UserPool.Arn
+            UserPoolArn: !GetAtt InfrastructureStack.Outputs.CognitoUserPoolId
             Identity:
               Header: Authorization
               ValidationExpression: "^Bearer [-0-9a-zA-Z\\.\\_]*$"
