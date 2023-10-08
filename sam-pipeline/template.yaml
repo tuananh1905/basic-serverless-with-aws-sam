@@ -51,7 +51,7 @@ Resources:
   MyApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: Prod
+      StageName: !Sub ${StageName}
       Cors: "'*'"
       Auth:
         DefaultAuthorizer: MyCognitoAuthorizer
@@ -108,13 +108,8 @@ Resources:
   AdminOnlyApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: prod
-      Auth:
-        DefaultAuthorizer: AWS_IAM
-        MethodSettings:
-          - ResourcePath: "/adminonly"
-            HttpMethod: "*"
-            AuthorizationType: AWS_IAM
+      StageName: !Sub ${StageName}
+
   AdminOnlyFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -127,17 +122,15 @@ Resources:
             RestApiId: !Ref AdminOnlyApi
             Path: /adminonly
             Method: get
+            Auth:
+              Authorizer: NONE
+            AuthorizationType: AWS_IAM
 
   CommonApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: prod
-      Auth:
-        DefaultAuthorizer: AWS_IAM
-        MethodSettings:
-          - ResourcePath: "/common"
-            HttpMethod: "*"
-            AuthorizationType: AWS_IAM
+      StageName: !Sub ${StageName}
+
   CommonFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -150,6 +143,10 @@ Resources:
             RestApiId: !Ref CommonApi
             Path: /common
             Method: get
+            Auth:
+              Authorizer: NONE
+            AuthorizationType: AWS_IAM
+
   InfrastructureStack:
     Type: AWS::Serverless::Application
     Properties:
