@@ -21,10 +21,17 @@ Resources:
   AppApi:
     Type: AWS::Serverless::Api
     Properties:
-      Description: IAM authorizer REST API demo
+      Description: "REST API with Cognito Authorizer"
       StageName: !Sub ${StageName}
       Auth:
-        DefaultAuthorizer: AWS_IAM
+        DefaultAuthorizer: MyCognitoAuthorizer
+        Authorizers:
+          MyCognitoAuthorizer:
+            UserPoolArn: !GetAtt UserPool.Arn
+            Identity:
+              Header: Authorization
+              ValidationExpression: "^Bearer [-0-9a-zA-z\._]*$"
+              ReauthorizeEvery: 300
 
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -48,30 +55,30 @@ Resources:
             RestApiId: !Ref AppApi
             Path: hello/
             Method: get
-  MyApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: !Sub ${StageName}
-      Cors: "'*'"
-      Auth:
-        DefaultAuthorizer: MyCognitoAuthorizer
-        Authorizers:
-          MyCognitoAuthorizer:
-            UserPoolArn: !GetAtt InfrastructureStack.Outputs.CognitoUserPoolArn
+  # MyApi:
+  #   Type: AWS::Serverless::Api
+  #   Properties:
+  #     StageName: !Sub ${StageName}
+  #     Cors: "'*'"
+  #     Auth:
+  #       DefaultAuthorizer: MyCognitoAuthorizer
+  #       Authorizers:
+  #         MyCognitoAuthorizer:
+  #           UserPoolArn: !GetAtt InfrastructureStack.Outputs.CognitoUserPoolArn
 
-  MyFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: hello_world
-      Handler: app.lambda_handler
-      Runtime: python3.8
-      Events:
-        Root:
-          Type: Api
-          Properties:
-            RestApiId: !Ref MyApi
-            Path: /
-            Method: GET
+  # MyFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: hello_world
+  #     Handler: app.lambda_handler
+  #     Runtime: python3.8
+  #     Events:
+  #       Root:
+  #         Type: Api
+  #         Properties:
+  #           RestApiId: !Ref MyApi
+  #           Path: /
+  #           Method: GET
   # AdminTest:
   #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
   #   Properties:
@@ -117,6 +124,8 @@ Resources:
             RestApiId: !Ref AppApi
             Path: /adminonly
             Method: get
+            Auth:
+              Authorizer: MyCognitoAuthorizer
 
   CommonFunction:
     Type: AWS::Serverless::Function
@@ -130,6 +139,8 @@ Resources:
             RestApiId: !Ref AppApi
             Path: /common
             Method: get
+            Auth:
+              Authorizer: MyCognitoAuthorizer
 
   InfrastructureStack:
     Type: AWS::Serverless::Application
