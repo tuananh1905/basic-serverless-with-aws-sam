@@ -77,9 +77,9 @@ Resources:
     Properties:
       IdentityPoolName: !Sub "${StageName}-${AppName}-identity-pool"
       AllowUnauthenticatedIdentities: false # chỉ cho phép xác thực từ những người dùng đã đăng nhập
-      # CognitoIdentityProviders:
-      #   - ClientId: !Ref UserPoolClient
-      #     ProviderName: !GetAtt [UserPool, "ProviderName"]
+      CognitoIdentityProviders:
+        - ClientId: !Ref UserPoolClient
+          ProviderName: !Sub "cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
 
   AdminGroup:
     Type: AWS::Cognito::UserPoolGroup
