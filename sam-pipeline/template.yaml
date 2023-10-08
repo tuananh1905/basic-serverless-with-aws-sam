@@ -105,6 +105,51 @@ Resources:
   #                     StringNotEquals:
   #                       cognito:preferred_role: !GetAtt InfrastructureStack.Outputs.CognitoAdminGroupArn
 
+  AdminOnlyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Auth:
+        DefaultAuthorizer: AWS_IAM
+        MethodSettings:
+          - ResourcePath: "/adminonly"
+            HttpMethod: "*"
+            AuthorizationType: AWS_IAM
+  AdminOnlyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Events:
+        AdminOnlyApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AdminOnlyApi
+            Path: /adminonly
+            Method: get
+
+  CommonApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Auth:
+        DefaultAuthorizer: AWS_IAM
+        MethodSettings:
+          - ResourcePath: "/common"
+            HttpMethod: "*"
+            AuthorizationType: AWS_IAM
+  CommonFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Events:
+        CommonApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CommonApi
+            Path: /common
+            Method: get
   InfrastructureStack:
     Type: AWS::Serverless::Application
     Properties:
@@ -130,3 +175,6 @@ Outputs:
   AppApiEndpoint:
     Description: API Endpoint
     Value: !Sub "https://${AppApi}.execute-api.${AWS::Region}.amazonaws.com/${AWS::StackName}"
+  CommonApiId:
+    Description: "API ID"
+    Value: !Ref CommonApi
