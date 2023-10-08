@@ -105,12 +105,7 @@ Resources:
   #                     StringNotEquals:
   #                       cognito:preferred_role: !GetAtt InfrastructureStack.Outputs.CognitoAdminGroupArn
 
-  AdminOnlyApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: !Sub ${StageName}
-
-  AdminOnlyFunction:
+AdminOnlyFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda_handler
@@ -119,19 +114,11 @@ Resources:
         AdminOnlyApi:
           Type: Api
           Properties:
-            RestApiId: !Ref AdminOnlyApi
+            RestApiId: !Ref MyApi
             Path: /adminonly
             Method: get
-            Auth:
-              Authorizer: NONE
-            AuthorizationType: AWS_IAM
 
-  CommonApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: !Sub ${StageName}
-
-  CommonFunction:
+CommonFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda_handler
@@ -140,12 +127,10 @@ Resources:
         CommonApi:
           Type: Api
           Properties:
-            RestApiId: !Ref CommonApi
+            RestApiId: !Ref MyApi
             Path: /common
             Method: get
-            Auth:
-              Authorizer: NONE
-            AuthorizationType: AWS_IAM
+
 
   InfrastructureStack:
     Type: AWS::Serverless::Application
