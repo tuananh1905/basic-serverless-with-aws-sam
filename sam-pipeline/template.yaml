@@ -156,6 +156,6 @@ Outputs:
   AppApiEndpoint:
     Description: API Endpoint
     Value: !Sub "https://${AppApi}.execute-api.${AWS::Region}.amazonaws.com/${AWS::StackName}"
-  CommonApiId:
+  AppApiId:
     Description: "API ID"
-    Value: !Ref CommonApi
+    Value: !Ref AppApi
