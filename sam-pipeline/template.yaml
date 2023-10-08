@@ -30,7 +30,7 @@ Resources:
             UserPoolArn: !GetAtt UserPool.Arn
             Identity:
               Header: Authorization
-              ValidationExpression: "^Bearer [-0-9a-zA-z\._]*$"
+              ValidationExpression: "^Bearer [-0-9a-zA-Z\\.\\_]*$"
               ReauthorizeEvery: 300
 
   HelloWorldFunction:
