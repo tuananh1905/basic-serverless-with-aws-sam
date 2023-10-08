@@ -105,7 +105,7 @@ Resources:
   #                     StringNotEquals:
   #                       cognito:preferred_role: !GetAtt InfrastructureStack.Outputs.CognitoAdminGroupArn
 
-AdminOnlyFunction:
+  AdminOnlyFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda_handler
@@ -118,7 +118,7 @@ AdminOnlyFunction:
             Path: /adminonly
             Method: get
 
-CommonFunction:
+  CommonFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda_handler
@@ -130,7 +130,6 @@ CommonFunction:
             RestApiId: !Ref MyApi
             Path: /common
             Method: get
-
 
   InfrastructureStack:
     Type: AWS::Serverless::Application
