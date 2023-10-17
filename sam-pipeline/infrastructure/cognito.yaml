@@ -97,7 +97,6 @@ Resources:
       Description: "Admin group for special privileges"
       UserPoolId:
         Ref: UserPool
-      RoleArn: !GetAtt AdminRole.Arn
 
   DoctorGroup:
     Type: AWS::Cognito::UserPoolGroup
@@ -106,7 +105,6 @@ Resources:
       Description: "Doctor group"
       UserPoolId:
         Ref: UserPool
-      RoleArn: !GetAtt DoctorRole.Arn
 
   NurseGroup:
     Type: AWS::Cognito::UserPoolGroup
@@ -115,80 +113,22 @@ Resources:
       Description: "Nurse group"
       UserPoolId:
         Ref: UserPool
-      RoleArn: !GetAtt NurseRole.Arn
 
-  AdminRole:
-    Type: AWS::IAM::Role
+  HeadNurseGroup:
+    Type: AWS::Cognito::UserPoolGroup
     Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Federated: "cognito-identity.amazonaws.com"
-            Action:
-              - "sts:AssumeRoleWithWebIdentity"
-            Condition:
-              StringEquals:
-                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
-      Policies:
-        - PolicyName: "AdminFullAccess"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: "Allow"
-                Action: "*"
-                Resource: "*"
+      GroupName: !Sub "${StageName}-${AppName}-head-nurse"
+      Description: "Head Nurse group"
+      UserPoolId:
+        Ref: UserPool
 
-  DoctorRole:
-    Type: AWS::IAM::Role
+  ReceptionistGroup:
+    Type: AWS::Cognito::UserPoolGroup
     Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Federated: "cognito-identity.amazonaws.com"
-            Action:
-              - "sts:AssumeRoleWithWebIdentity"
-            Condition:
-              StringEquals:
-                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
-      Policies:
-        - PolicyName: "DoctorLimitedAccess"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: "Allow"
-                Action:
-                  - "execute-api:Invoke"
-                Resource:
-                  - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${AppApiId}/*/GET/common"
-
-  NurseRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Federated: "cognito-identity.amazonaws.com"
-            Action:
-              - "sts:AssumeRoleWithWebIdentity"
-            Condition:
-              StringEquals:
-                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
-      Policies:
-        - PolicyName: "NurseLimitedAccess"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: "Allow"
-                Action:
-                  - "execute-api:Invoke"
-                Resource:
-                  - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${AppApiId}/*/GET/common"
+      GroupName: !Sub "${StageName}-${AppName}-receptionist"
+      Description: "Receptionist group"
+      UserPoolId:
+        Ref: UserPool
 
 Outputs:
   UserPoolId:
@@ -219,15 +159,10 @@ Outputs:
     Description: "ID of the Nurse user pool group"
     Value: !Ref NurseGroup
 
-  AdminRoleArn:
-    Description: "ARN of the Admin IAM role"
-    Value: !GetAtt AdminRole.Arn
+  HeadNurseGroupId:
+    Description: "ID of the Head Nurse user pool group"
+    Value: !Ref HeadNurseGroup
 
-  AdminGroupArn:
-    Description: "ARN of the Admin user pool group"
-    Value: !Sub
-      - arn:aws:cognito-idp:${Region}:${AccountId}:userpool/${UserPoolId}/group/${GroupName}
-      - Region: !Ref "AWS::Region"
-        AccountId: !Ref "AWS::AccountId"
-        UserPoolId: !Ref UserPool
-        GroupName: !Sub "${StageName}-${AppName}-admin"
+  ReceptionistGroupId:
+     Description: "ID of the Receptionist user pool group"
+    Value: !Ref ReceptionistGroup
