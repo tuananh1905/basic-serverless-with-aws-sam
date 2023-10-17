@@ -7,9 +7,6 @@ Parameters:
     Type: String
   AppName:
     Type: String
-  AppApiId:
-    Type: String
-    Description: The ID of the AppApi from the parent stack
 
 Resources:
   UserPool:

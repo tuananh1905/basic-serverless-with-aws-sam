@@ -10,9 +10,6 @@ Parameters:
   TableName:
     Type: String
     Description: Name of the DynamoDB table
-  AppApiId:
-    Type: String
-    Description: The ID of the AppApi from the parent stack
 
 Resources:
   DynamoDBStack:
@@ -29,7 +26,6 @@ Resources:
       Parameters:
         StageName: !Ref StageName
         AppName: !Ref AppName
-        AppApiId: !Ref AppApiId
 
 Outputs:
   CognitoAdminGroupArn:
